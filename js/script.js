@@ -40,7 +40,7 @@ window.addEventListener('DOMContentLoaded', ()=> {
 
     // Timer
 
-    const deadLine = '2023-04-01';
+    const deadLine = '2023-05-01';
 
     function getTimeRemaining(endtime) {
         let days, hours, minutes, seconds;
@@ -129,10 +129,11 @@ window.addEventListener('DOMContentLoaded', ()=> {
           modal = document.querySelector('.modal'),
           modalCloseBtn = document.querySelector('[data-close]');
 
-    function showModal() {
+    function openModal() {
         modal.classList.add('show');
         modal.classList.remove('hide');
         document.body.style.overflow = 'hidden';
+        clearInterval(modalTimerId);
     }
 
     function closeModal() {
@@ -142,9 +143,7 @@ window.addEventListener('DOMContentLoaded', ()=> {
     }
 
     modalTrigger.forEach(btn => {
-        btn.addEventListener('click', () => {
-            showModal();
-        });     
+        btn.addEventListener('click', openModal);     
     });
 
     modalCloseBtn.addEventListener('click', closeModal);
@@ -160,4 +159,15 @@ window.addEventListener('DOMContentLoaded', ()=> {
             closeModal();
         }
     });
+
+    const modalTimerId = setTimeout(openModal, 5000);
+
+    function showModalByScroll() {
+        if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight -1) {
+            openModal();
+            window.removeEventListener('scroll', showModalByScroll);
+        }
+    }
+
+    window.addEventListener('scroll', showModalByScroll);
 });
