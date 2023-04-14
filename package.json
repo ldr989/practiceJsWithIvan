@@ -1,0 +1,22 @@
+{
+  "name": "food",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ldr989/practiceJsWithIvan.git"
+  },
+  "author": "Ldr",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ldr989/practiceJsWithIvan/issues"
+  },
+  "homepage": "https://github.com/ldr989/practiceJsWithIvan#readme",
+  "devDependencies": {
+    "json-server": "^0.17.3"
+  }
+}
