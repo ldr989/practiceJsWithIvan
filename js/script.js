@@ -312,82 +312,131 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     // Slider
+    // My version
 
-    const offerSliderWrapper = document.querySelector('.offer__slider-wrapper'),
-          offerSliders = offerSliderWrapper.querySelectorAll('.offer__slide'),
-          offerSliderPrev = document.querySelector('.offer__slider-prev'),
-          offerSliderNext = document.querySelector('.offer__slider-next');
-    let currentSlider = document.querySelector('#current'),
-        totalOfSliders = document.querySelector('#total');
+    // const offerSliderWrapper = document.querySelector('.offer__slider-wrapper'),
+    //       offerSliders = offerSliderWrapper.querySelectorAll('.offer__slide'),
+    //       offerSliderPrev = document.querySelector('.offer__slider-prev'),
+    //       offerSliderNext = document.querySelector('.offer__slider-next');
+    // let currentSlider = document.querySelector('#current'),
+    //     totalOfSliders = document.querySelector('#total');
     
 
-    function hideSlide () {
-        offerSliders.forEach(slide => {
-            slide.classList.add('hide');
-            slide.classList.remove('show', 'fade');
-        });
-    }
+    // function hideSlide () {
+    //     offerSliders.forEach(slide => {
+    //         slide.classList.add('hide');
+    //         slide.classList.remove('show', 'fade');
+    //     });
+    // }
 
-    function showSlide (i = 0) {
-        offerSliders[i].classList.add('show', 'fade');
-        offerSliders[i].classList.remove('hide');
-    }
+    // function showSlide (i = 0) {
+    //     offerSliders[i].classList.add('show', 'fade');
+    //     offerSliders[i].classList.remove('hide');
+    // }
 
-    function addZero (num) {
-        if (num < 10) {
-            return `0${num}`;
-        }
-    }
+    // function addZero (num) {
+    //     if (num < 10) {
+    //         return `0${num}`;
+    //     } else {
+    //         return num;
+    //     }
+    // }
 
-    function changeNumberOfCurrentSlide () {
-        offerSliders.forEach((item, index) => {
-            if (item.classList.contains('show')) {
-                currentSlider.textContent = addZero((index + 1));
-            }
-        });
-    }
+    // function changeNumberOfCurrentSlide () {
+    //     offerSliders.forEach((item, index) => {
+    //         if (item.classList.contains('show')) {
+    //             currentSlider.textContent = addZero((index + 1));
+    //         }
+    //     });
+    // }
 
-    hideSlide();
-    showSlide();
-    changeNumberOfCurrentSlide();
+    // hideSlide();
+    // showSlide();
+    // changeNumberOfCurrentSlide();
 
 
-    totalOfSliders.textContent = addZero(offerSliders.length);
+    // totalOfSliders.textContent = addZero(offerSliders.length);
     
 
-    offerSliderPrev.addEventListener('click', (event) => {
+    // offerSliderPrev.addEventListener('click', (event) => {
         
-        offerSliders.forEach((item, index) => {
-            if (+currentSlider.innerHTML === (index + 1)) {
-                if ((index - 1) < 0) {
-                    hideSlide();
-                    showSlide((offerSliders.length - 1));
+    //     offerSliders.forEach((item, index) => {
+    //         if (+currentSlider.innerHTML === (index + 1)) {
+    //             if ((index - 1) < 0) {
+    //                 hideSlide();
+    //                 showSlide((offerSliders.length - 1));
                     
-                } else {
-                    hideSlide();
-                    showSlide((index - 1));
-                }
-            }
-            
-            
-        });
-        changeNumberOfCurrentSlide();
-    });
+    //             } else {
+    //                 hideSlide();
+    //                 showSlide((index - 1));
+    //             }
+    //         }           
+    //     });
+    //     changeNumberOfCurrentSlide();
+    // });
     
-    offerSliderNext.addEventListener('click', () => {
-        offerSliders.forEach((item, index) => {
-            if (+currentSlider.innerHTML === (index + 1)) {
-                if (index === (offerSliders.length - 1) ) {
-                    hideSlide();
-                    showSlide(0);
-                } else {
-                    hideSlide();
-                    showSlide((index + 1));
-                }
-            }
+    // offerSliderNext.addEventListener('click', () => {
+    //     offerSliders.forEach((item, index) => {
+    //         if (+currentSlider.innerHTML === (index + 1)) {
+    //             if (index === (offerSliders.length - 1) ) {
+    //                 hideSlide();
+    //                 showSlide(0);
+    //             } else {
+    //                 hideSlide();
+    //                 showSlide((index + 1));
+    //             }
+    //         }
+    //     });
+    //     changeNumberOfCurrentSlide();
+    // });
 
+    // The sensei's version
 
-        });
-        changeNumberOfCurrentSlide();
+    const slides = document.querySelectorAll('.offer__slide'),
+          prev = document.querySelector('.offer__slider-prev'),
+          next = document.querySelector('.offer__slider-next'),
+          total = document.querySelector('#total'),
+          current = document.querySelector('#current');
+    let slideIndex = 1;
+
+    showSlides(slideIndex);
+
+    if (slides.length < 10) {
+        total.textContent = `0${slides.length}`;
+    } else {
+        total.textContent = slides.length;
+    }
+
+    function showSlides(n) {
+        if (n > slides.length) {
+            slideIndex = 1;
+        }
+
+        if (n < 1) {
+            slideIndex = slides.length;
+        }
+
+        slides.forEach(item => item.style.display = 'none');
+
+        slides[slideIndex - 1].style.display = 'block';
+
+        if (slides.length < 10) {
+            current.textContent = `0${slideIndex}`;
+        } else {
+            current.textContent = slideIndex;
+        }
+
+    }
+
+    function plusSlides(n) {
+        showSlides(slideIndex += n);
+    }
+
+    prev.addEventListener('click', () => {
+        plusSlides(-1);
+    });
+
+    next.addEventListener('click', () => {
+        plusSlides(1);
     });
 });
