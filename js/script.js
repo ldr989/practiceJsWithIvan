@@ -170,8 +170,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // Cards
 
-    class Card {
-        constructor(src, alt, title, descr, price, exchangeRate, parentSelector, ...classes) {
+    class MenuCard {
+        constructor(src, alt, title, descr, price, parentSelector, ...classes) {
             this.src = src;
             this.alt = alt;
             this.title = title;
@@ -179,7 +179,7 @@ window.addEventListener('DOMContentLoaded', () => {
             this.price = price;
             this.classes = classes;
             this.parent = document.querySelector(parentSelector);
-            this.exchangeRate = exchangeRate;
+            this.exchangeRate = 87;
             this.changeExchangeRate();
         }
 
@@ -210,36 +210,23 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    new Card (
-        'img/tabs/vegy.jpg',
-        'vegy',
-        'Меню "Фитнес"',
-        'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-        9,
-        88,
-        '.menu .container',
-    ).render();
+    const getResource = async (url) => {
+        const res = await fetch(url);
 
-    new Card(
-        'img/tabs/elite.jpg',
-        'elite',
-        'Меню “Премиум”',
-        'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
-        14,
-        88,
-        '.menu .container'
-    ).render();
+        if (!res.ok) {
+            throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+        }
 
-    new Card(
-        'img/tabs/post.jpg',
-        'post',
-        'Меню "Постное"',
-        'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество белков за счет тофу и импортных вегетарианских стейков.',
-        21,
-        88,
-        '.menu .container'
-    ).render();
-    
+        return await res.json();
+    };
+
+    getResource('http://localhost:3000/menu')
+        .then(data => {
+            data.forEach(({img, altimg, title, descr, price}) => {
+                new MenuCard(img, altimg, title, descr, price, '.menu .container').render();
+            });
+        });
+
     // Forms
 
     const forms = document.querySelectorAll('form');
@@ -251,10 +238,22 @@ window.addEventListener('DOMContentLoaded', () => {
     };
 
     forms.forEach(item => {
-        postData(item);
+        bindPostData(item);
     });
 
-    function postData(form) {
+    const postData = async (url, data) => {
+        const res = await fetch(url, {
+            method:"POST",
+            headers: {
+                'Content-type': 'application/json'
+            },
+            body: data
+        });
+
+        return await res.json();
+    };
+
+    function bindPostData(form) {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
@@ -273,15 +272,9 @@ window.addEventListener('DOMContentLoaded', () => {
                 object[key] = value;
             });
 
+            const json = JSON.stringify(Object.fromEntries(formData.entries()));
 
-            fetch('server.php', {
-                method: "POST",
-                headers: {
-                    'Content-type': 'application/json'
-                },
-                body: JSON.stringify(object)
-            })
-            .then(data => data.text())
+            postData('http://localhost:3000/requests', json)
             .then (data => {
                 console.log(data);
                 showThanksModal(message.success);
@@ -317,4 +310,84 @@ window.addEventListener('DOMContentLoaded', () => {
             closeModal();
         }, 4000);
     }
+
+    // Slider
+
+    const offerSliderWrapper = document.querySelector('.offer__slider-wrapper'),
+          offerSliders = offerSliderWrapper.querySelectorAll('.offer__slide'),
+          offerSliderPrev = document.querySelector('.offer__slider-prev'),
+          offerSliderNext = document.querySelector('.offer__slider-next');
+    let currentSlider = document.querySelector('#current'),
+        totalOfSliders = document.querySelector('#total');
+    
+
+    function hideSlide () {
+        offerSliders.forEach(slide => {
+            slide.classList.add('hide');
+            slide.classList.remove('show', 'fade');
+        });
+    }
+
+    function showSlide (i = 0) {
+        offerSliders[i].classList.add('show', 'fade');
+        offerSliders[i].classList.remove('hide');
+    }
+
+    function addZero (num) {
+        if (num < 10) {
+            return `0${num}`;
+        }
+    }
+
+    function changeNumberOfCurrentSlide () {
+        offerSliders.forEach((item, index) => {
+            if (item.classList.contains('show')) {
+                currentSlider.textContent = addZero((index + 1));
+            }
+        });
+    }
+
+    hideSlide();
+    showSlide();
+    changeNumberOfCurrentSlide();
+
+
+    totalOfSliders.textContent = addZero(offerSliders.length);
+    
+
+    offerSliderPrev.addEventListener('click', (event) => {
+        
+        offerSliders.forEach((item, index) => {
+            if (+currentSlider.innerHTML === (index + 1)) {
+                if ((index - 1) < 0) {
+                    hideSlide();
+                    showSlide((offerSliders.length - 1));
+                    
+                } else {
+                    hideSlide();
+                    showSlide((index - 1));
+                }
+            }
+            
+            
+        });
+        changeNumberOfCurrentSlide();
+    });
+    
+    offerSliderNext.addEventListener('click', () => {
+        offerSliders.forEach((item, index) => {
+            if (+currentSlider.innerHTML === (index + 1)) {
+                if (index === (offerSliders.length - 1) ) {
+                    hideSlide();
+                    showSlide(0);
+                } else {
+                    hideSlide();
+                    showSlide((index + 1));
+                }
+            }
+
+
+        });
+        changeNumberOfCurrentSlide();
+    });
 });
