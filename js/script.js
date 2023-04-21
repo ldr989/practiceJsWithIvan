@@ -430,6 +430,7 @@ window.addEventListener('DOMContentLoaded', () => {
         }
 
         slidesField.style.transform = `translateX(-${offset}px)`;
+        makeDotActive(dots[offset / +width.slice(0, width.length - 2)]);
 
         if (slideIndex == slides.length) {
             slideIndex = 1;
@@ -449,9 +450,13 @@ window.addEventListener('DOMContentLoaded', () => {
             offset = +width.slice(0, width.length - 2) * (slides.length - 1);
         } else {
             offset -= +width.slice(0, width.length - 2);
+
         }
 
         slidesField.style.transform = `translateX(-${offset}px)`;
+
+        makeDotActive(dots[offset / +width.slice(0, width.length - 2)]);
+        
 
         if (slideIndex == 1) {
             slideIndex = slides.length;
@@ -470,6 +475,13 @@ window.addEventListener('DOMContentLoaded', () => {
     const slider = document.querySelector('.offer__slider');
     const carouselIndicators = document.createElement('div');
 
+    function makeDotActive(element) {
+        dots.forEach(item => {
+            item.classList.remove('active');
+        });
+        element.classList.add('active');
+    }
+
     slider.style.position = 'relative';
     carouselIndicators.classList.add('carousel-indicators');
     slider.append(carouselIndicators);
@@ -480,5 +492,24 @@ window.addEventListener('DOMContentLoaded', () => {
         div.classList.add('dot');
     });
 
+    
+    const dots = document.querySelectorAll('.dot');
+
+    makeDotActive(dots[0]);
+
+    dots.forEach((item, index) => {
+        item.addEventListener('click', (e) => {
+            const calc = index * +width.slice(0, width.length - 2);
+
+            slidesField.style.transform = `translateX(-${calc}px)`;
+            
+            makeDotActive(item);
+            if (index < 10) {
+                current.textContent = `0${(index + 1)}`;
+            } else {
+                current.textContent = (index + 1);
+            }
+        });
+    });
 
 });
