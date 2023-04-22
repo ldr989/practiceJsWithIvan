@@ -417,6 +417,10 @@ window.addEventListener('DOMContentLoaded', () => {
         slidesField.style.transform = `translateX(-${offset}px)`;
     }
 
+    function deleteNoDigits(string) {
+        return +string.replace(/\D/g, '');
+    }
+
     if (slides.length < 10) {
         total.textContent = `0${slides.length}`;
         current.textContent = `0${slideIndex}`;
@@ -486,14 +490,14 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     next.addEventListener('click', () => {
-        if (offset == +width.slice(0, width.length -2) * (slides.length - 1)) {
+        if (offset == deleteNoDigits(width) * (slides.length - 1)) {
             offset = 0;
         } else {
-            offset += +width.slice(0, width.length - 2);
+            offset += deleteNoDigits(width);
         }
 
         transformSlide();
-        //makeDotActive(dots[offset / +width.slice(0, width.length - 2)]);
+        //makeDotActive(dots[offset / deleteNoDigits(width)]);
 
         if (slideIndex == slides.length) {
             slideIndex = 1;
@@ -507,15 +511,15 @@ window.addEventListener('DOMContentLoaded', () => {
 
     prev.addEventListener('click', () => {
         if (offset == 0) {
-            offset = +width.slice(0, width.length - 2) * (slides.length - 1);
+            offset = deleteNoDigits(width) * (slides.length - 1);
         } else {
-            offset -= +width.slice(0, width.length - 2);
+            offset -= deleteNoDigits(width);
 
         }
 
         transformSlide();
 
-        //makeDotActive(dots[offset / +width.slice(0, width.length - 2)]);
+        //makeDotActive(dots[offset / deleteNoDigits(width)]);
         
 
         if (slideIndex == 1) {
@@ -533,7 +537,7 @@ window.addEventListener('DOMContentLoaded', () => {
             const slideTo = e.target.getAttribute('data-slide-to');
 
             slideIndex = slideTo;
-            offset = +width.slice(0, width.length - 2) * (slideTo - 1);
+            offset = deleteNoDigits(width) * (slideTo - 1);
 
             transformSlide();
             addZero();
@@ -563,14 +567,14 @@ window.addEventListener('DOMContentLoaded', () => {
     //     div.classList.add('dot');
     // });
 
-    
+
     // const dots = document.querySelectorAll('.dot');
 
     // makeDotActive(dots[0]);
 
     // dots.forEach((item, index) => {
     //     item.addEventListener('click', (e) => {
-    //         const calc = index * +width.slice(0, width.length - 2);
+    //         const calc = index * deleteNoDigits(width);
 
     //         slidesField.style.transform = `translateX(-${calc}px)`;
             
